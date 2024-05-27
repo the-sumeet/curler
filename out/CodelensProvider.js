@@ -41,6 +41,9 @@ class CodelensProvider {
         });
     }
     provideCodeLenses(document, token) {
+        if (document.languageId !== 'curler') {
+            return []; // Return an empty list for non-JavaScript files
+        }
         if (vscode.workspace.getConfiguration("sample").get("enableCodeLens", true)) {
             this.codeLenses = [];
             const regex = new RegExp(this.regex);
