@@ -5,6 +5,7 @@ Curler is an extention that allows you to run curl commands, and view results wi
 ## Features
 
 - Execute curl commands written in file.
+- Curler file is just a bash file, with `curler.sh` extension. Hence, you we can share the file with others, and they can execute the request without any dependencies (except curl) needed.
 - Write success result and error to file.
 - View results in a file.
 
