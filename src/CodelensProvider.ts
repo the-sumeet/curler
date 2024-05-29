@@ -21,6 +21,10 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 
 	public provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.CodeLens[] | Thenable<vscode.CodeLens[]> {
 
+		if (document.languageId !== 'curler') {
+			return [];
+		}
+
 		if (vscode.workspace.getConfiguration("sample").get("enableCodeLens", true)) {
 			this.codeLenses = [];
 			const regex = new RegExp(this.regex);
