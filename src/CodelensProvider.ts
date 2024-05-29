@@ -47,8 +47,8 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 	public resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken) {
 		if (vscode.workspace.getConfiguration("sample").get("enableCodeLens", true)) {
 			codeLens.command = {
-				title: "Codelens provided by sample extension",
-				tooltip: "Tooltip provided by sample extension",
+				title: "Run",
+				tooltip: "Run cURL command",
 				command: "helloworld.codelensAction",
 				arguments: ["Argument 1", false]
 			};
