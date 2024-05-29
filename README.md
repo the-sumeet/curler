@@ -12,3 +12,8 @@ Curler is an extention that allows you to run curl commands, and view results wi
 
 [curl](https://curl.se/download.html) must be installed on your system. Many systems come with curl pre-installed.
 
+## ToDos
+
+- Add support for code-lens buttons to add `curl` command headers, query params.
+- Add support for curl command validation and suggestions.
+- Add support for curl command snippets.
