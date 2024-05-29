@@ -28,6 +28,8 @@ exports.deactivate = exports.activate = void 0;
 // Import the module and reference it with the alias vscode in your code below
 const vscode = __importStar(require("vscode"));
 const CodelensProvider_1 = require("./CodelensProvider");
+const fs = require('fs');
+const cp = require('child_process');
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 function activate(context) {
@@ -63,16 +65,34 @@ function activate(context) {
         vscode.workspace.getConfiguration("sample").update("enableCodeLens", false, true);
     });
     context.subscriptions.push(disableLensDisposable);
-    let actionDisposable = vscode.commands.registerCommand('helloworld.codelensAction', () => {
+    let actionDisposable = vscode.commands.registerCommand('helloworld.codelensAction', (args) => {
         // The code you place here will be executed every time your command is executed
         // Display a message box to the user
-        const cp = require('child_process');
-        cp.exec('curl -XGET https://jsonplaceholder.typicode.com/todos', (err, stdout, stderr) => {
-            console.log('stdout: ' + stdout);
-            console.log('stderr: ' + stderr);
+        // Get current filename
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            return;
+        }
+        if (editor.document.isUntitled) {
+            vscode.window.showInformationMessage('Please save the file before executing this command');
+            return;
+        }
+        const currentFileName = editor.document.fileName;
+        cp.exec(editor.document.getText(), (err, stdout, stderr) => {
+            // This var contains the file written
+            var fileWrittenPath;
             if (err) {
-                console.log('error: ' + err);
+                fs.writeFileSync(currentFileName + ".err", stdout, 'utf-8');
+                fileWrittenPath = currentFileName + ".err";
             }
+            else {
+                fs.writeFileSync(currentFileName + ".out", stdout, 'utf-8');
+                fileWrittenPath = currentFileName + ".out";
+            }
+            const openPath = vscode.Uri.file(fileWrittenPath);
+            vscode.workspace.openTextDocument(openPath).then(doc => {
+                vscode.window.showTextDocument(doc);
+            });
         });
         vscode.window.showInformationMessage(`Hello from codelens`);
     });

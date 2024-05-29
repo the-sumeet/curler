@@ -42,7 +42,7 @@ class CodelensProvider {
     }
     provideCodeLenses(document, token) {
         if (document.languageId !== 'curler') {
-            return []; // Return an empty list for non-JavaScript files
+            return [];
         }
         if (vscode.workspace.getConfiguration("sample").get("enableCodeLens", true)) {
             this.codeLenses = [];
@@ -65,8 +65,8 @@ class CodelensProvider {
     resolveCodeLens(codeLens, token) {
         if (vscode.workspace.getConfiguration("sample").get("enableCodeLens", true)) {
             codeLens.command = {
-                title: "Codelens provided by sample extension",
-                tooltip: "Tooltip provided by sample extension",
+                title: "Run",
+                tooltip: "Run cURL command",
                 command: "helloworld.codelensAction",
                 arguments: ["Argument 1", false]
             };
