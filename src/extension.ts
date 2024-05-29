@@ -2,6 +2,9 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { CodelensProvider } from './CodelensProvider';
+const fs = require('fs');
+const cp = require('child_process')
+
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -47,17 +50,41 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	context.subscriptions.push(disableLensDisposable);
 
-	let actionDisposable = vscode.commands.registerCommand('helloworld.codelensAction', () => {
+	let actionDisposable = vscode.commands.registerCommand('helloworld.codelensAction', (args: any) => {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
 
-		const cp = require('child_process')
-		cp.exec('curl -XGET https://jsonplaceholder.typicode.com/todos', (err: string, stdout: string, stderr: string) => {
-			console.log('stdout: ' + stdout);
-			console.log('stderr: ' + stderr);
+		// Get current filename
+		const editor = vscode.window.activeTextEditor;
+		if (!editor) {
+			return;
+		}
+		if (editor.document.isUntitled) {
+			vscode.window.showInformationMessage('Please save the file before executing this command');
+			return;
+		}
+
+
+
+		const currentFileName = editor.document.fileName;
+		cp.exec(editor.document.getText(), (err: string, stdout: string, stderr: string) => {
+
+			// This var contains the file written
+			var fileWrittenPath: string;
+
 			if (err) {
-				console.log('error: ' + err);
+				fs.writeFileSync(currentFileName + ".err", stdout, 'utf-8');
+				fileWrittenPath = currentFileName + ".err";
+			} else {
+				fs.writeFileSync(currentFileName + ".out", stdout, 'utf-8');
+				fileWrittenPath = currentFileName + ".out";
 			}
+
+			const openPath = vscode.Uri.file(fileWrittenPath);
+			vscode.workspace.openTextDocument(openPath).then(doc => {
+				vscode.window.showTextDocument(doc);
+			});
+
 		});
 
 		vscode.window.showInformationMessage(`Hello from codelens`);
