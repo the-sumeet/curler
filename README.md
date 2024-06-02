@@ -13,6 +13,12 @@ Curler is an extention that allows you to run curl commands, and view results wi
 
 [curl](https://curl.se/download.html) must be installed on your system. Many systems come with curl pre-installed.
 
+## Antlr4 
+
+```
+java -jar antlr4-4.9.3-complete.jar -Dlanguage=TypeScript -o ./src/antlr4 src/Curl.g4     
+```
+
 ## ToDos
 
 - Add support for code-lens buttons to add `curl` command headers, query params.

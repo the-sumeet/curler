@@ -1,8 +1,6 @@
 import * as vscode from 'vscode';
 
-/**
- * CodelensProvider
- */
+
 export class CodelensProvider implements vscode.CodeLensProvider {
 
 	private codeLenses: vscode.CodeLens[] = [];
@@ -45,15 +43,12 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 	}
 
 	public resolveCodeLens(codeLens: vscode.CodeLens, token: vscode.CancellationToken) {
-		if (vscode.workspace.getConfiguration("sample").get("enableCodeLens", true)) {
-			codeLens.command = {
-				title: "Run",
-				tooltip: "Run cURL command",
-				command: "helloworld.codelensAction",
-				arguments: ["Argument 1", false]
-			};
-			return codeLens;
-		}
-		return null;
+		codeLens.command = {
+			title: "Run",
+			tooltip: "Run cURL command",
+			command: "helloworld.codelensAction",
+			arguments: ["Argument 1", false]
+		};
+		return codeLens;
 	}
 }

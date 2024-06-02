@@ -22,53 +22,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deactivate = exports.activate = void 0;
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = __importStar(require("vscode"));
-const CodelensProvider_1 = require("./CodelensProvider");
-const fs = require('fs');
-const cp = require('child_process');
+const path = __importStar(require("path"));
+const CodelensProvider_js_1 = require("./CodelensProvider.js");
+const fs_1 = __importDefault(require("fs"));
+const child_process_1 = __importDefault(require("child_process"));
+const parserDriver_js_1 = __importDefault(require("./parserDriver.js"));
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 function activate(context) {
-    const codelensProvider = new CodelensProvider_1.CodelensProvider();
+    const codelensProvider = new CodelensProvider_js_1.CodelensProvider();
+    const collection = vscode.languages.createDiagnosticCollection('antlr');
     vscode.languages.registerCodeLensProvider("*", codelensProvider);
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "helloworld" is now active!');
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with registerCommand
-    // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('helloworld.helloWorld', () => {
-        // The code you place here will be executed every time your command is executed
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Hello Sumeet from HelloWorld!');
-    });
-    context.subscriptions.push(disposable);
-    let testDisposable = vscode.commands.registerCommand('helloworld.test', () => {
-        // The code you place here will be executed every time your command is executed
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Test');
-    });
-    context.subscriptions.push(testDisposable);
-    let enableLensDisposable = vscode.commands.registerCommand('helloworld.enableCodeLens', () => {
-        // The code you place here will be executed every time your command is executed
-        // Display a message box to the user
-        vscode.workspace.getConfiguration("sample").update("enableCodeLens", true, true);
-    });
-    context.subscriptions.push(enableLensDisposable);
-    let disableLensDisposable = vscode.commands.registerCommand('helloworld.disableCodeLens', () => {
-        // The code you place here will be executed every time your command is executed
-        // Display a message box to the user
-        vscode.workspace.getConfiguration("sample").update("enableCodeLens", false, true);
-    });
-    context.subscriptions.push(disableLensDisposable);
     let actionDisposable = vscode.commands.registerCommand('helloworld.codelensAction', (args) => {
         // The code you place here will be executed every time your command is executed
-        // Display a message box to the user
-        // Get current filename
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
             return;
@@ -78,15 +52,15 @@ function activate(context) {
             return;
         }
         const currentFileName = editor.document.fileName;
-        cp.exec(editor.document.getText(), (err, stdout, stderr) => {
+        child_process_1.default.exec(editor.document.getText(), (err, stdout, stderr) => {
             // This var contains the file written
             var fileWrittenPath;
             if (err) {
-                fs.writeFileSync(currentFileName + ".err", stdout, 'utf-8');
+                fs_1.default.writeFileSync(currentFileName + ".err", stdout, 'utf-8');
                 fileWrittenPath = currentFileName + ".err";
             }
             else {
-                fs.writeFileSync(currentFileName + ".out", stdout, 'utf-8');
+                fs_1.default.writeFileSync(currentFileName + ".out", stdout, 'utf-8');
                 fileWrittenPath = currentFileName + ".out";
             }
             const openPath = vscode.Uri.file(fileWrittenPath);
@@ -97,8 +71,43 @@ function activate(context) {
         vscode.window.showInformationMessage(`Hello from codelens`);
     });
     context.subscriptions.push(actionDisposable);
+    if (vscode.window.activeTextEditor) {
+        updateDiagnostics(vscode.window.activeTextEditor.document, collection);
+    }
+    context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(event => {
+        if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document === event.document) {
+            updateDiagnostics(event.document, collection);
+        }
+    }));
 }
 exports.activate = activate;
+function updateDiagnostics(document, collection) {
+    if (document && path.basename(document.uri.fsPath).endsWith('.curl.sh')) {
+        const { result, errors } = (0, parserDriver_js_1.default)(document.getText());
+        if (errors && errors.length > 0) {
+            let diagnostics = [];
+            errors.forEach((error) => {
+                diagnostics.push({
+                    // code: '',
+                    message: errors[0].msg,
+                    range: new vscode.Range(new vscode.Position(errors[0].line - 1, errors[0].column), new vscode.Position(errors[0].line - 1, errors[0].column)),
+                    severity: vscode.DiagnosticSeverity.Error,
+                    // source: '',
+                    // relatedInformation: [
+                    // 	new vscode.DiagnosticRelatedInformation(new vscode.Location(document.uri, new vscode.Range(new vscode.Position(1, 8), new vscode.Position(1, 9))), 'first assignment to `x`')
+                    // ]
+                });
+            });
+            collection.set(document.uri, diagnostics);
+        }
+        else {
+            collection.clear();
+        }
+    }
+    else {
+        collection.clear();
+    }
+}
 // This method is called when your extension is deactivated
 function deactivate() { }
 exports.deactivate = deactivate;
