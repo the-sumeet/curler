@@ -3,7 +3,6 @@
   "displayName": "Curler",
   "description": "",
   "version": "0.0.1",
-  "type": "module",
   "engines": {
     "vscode": "^1.89.0"
   },
@@ -16,24 +15,6 @@
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
-      {
-        "command": "helloworld.helloWorld",
-        "title": "Hello World"
-      },
-      {
-        "command": "helloworld.test",
-        "title": "Hello World Test"
-      },
-      {
-        "title": "Enable CodeLens",
-        "command": "helloworld.enableCodeLens",
-        "category": "CodeLens Sample"
-      },
-      {
-        "title": "Disable Codelens",
-        "command": "helloworld.disableCodeLens",
-        "category": "CodeLens Sample"
-      }
     ],
     "languages": [
       {

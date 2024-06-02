@@ -25,9 +25,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CodelensProvider = void 0;
 const vscode = __importStar(require("vscode"));
-/**
- * CodelensProvider
- */
 class CodelensProvider {
     codeLenses = [];
     regex;
@@ -63,16 +60,13 @@ class CodelensProvider {
         return [];
     }
     resolveCodeLens(codeLens, token) {
-        if (vscode.workspace.getConfiguration("sample").get("enableCodeLens", true)) {
-            codeLens.command = {
-                title: "Run",
-                tooltip: "Run cURL command",
-                command: "helloworld.codelensAction",
-                arguments: ["Argument 1", false]
-            };
-            return codeLens;
-        }
-        return null;
+        codeLens.command = {
+            title: "Run",
+            tooltip: "Run cURL command",
+            command: "helloworld.codelensAction",
+            arguments: ["Argument 1", false]
+        };
+        return codeLens;
     }
 }
 exports.CodelensProvider = CodelensProvider;
