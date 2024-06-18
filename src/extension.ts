@@ -17,7 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	vscode.languages.registerCodeLensProvider("*", codelensProvider);
 
-	let actionDisposable = vscode.commands.registerCommand('helloworld.codelensAction', (args: any) => {
+	let actionDisposable = vscode.commands.registerCommand('curler.runCurl', (args: any) => {
 		// The code you place here will be executed every time your command is executed
 
 		const editor = vscode.window.activeTextEditor;

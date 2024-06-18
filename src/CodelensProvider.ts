@@ -46,7 +46,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 		codeLens.command = {
 			title: "Run",
 			tooltip: "Run cURL command",
-			command: "helloworld.codelensAction",
+			command: "curler.runCurl",
 			arguments: ["Argument 1", false]
 		};
 		return codeLens;
