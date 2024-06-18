@@ -13,7 +13,6 @@ import parseCurlCommand from './parserDriver.js';
 export function activate(context: vscode.ExtensionContext) {
 
 	const codelensProvider = new CodelensProvider();
-	const collection = vscode.languages.createDiagnosticCollection('antlr');
 
 	vscode.languages.registerCodeLensProvider("*", codelensProvider);
 
@@ -54,42 +53,8 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	context.subscriptions.push(actionDisposable);
 
-	if (vscode.window.activeTextEditor) {
-		updateDiagnostics(vscode.window.activeTextEditor.document, collection);
-	}
-	context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(event => {
-		if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document === event.document) {
-			updateDiagnostics(event.document, collection);
-		}
-	}));
-
 }
 
-function updateDiagnostics(document: vscode.TextDocument, collection: vscode.DiagnosticCollection): void {
-	if (document && path.basename(document.uri.fsPath).endsWith('.curl.sh')) {
-		const {result, errors} = parseCurlCommand(document.getText());
-		if (errors && errors.length > 0) {
-			let diagnostics: vscode.Diagnostic[] = [];
-			errors.forEach((error) => {
-				diagnostics.push({
-					// code: '',
-					message: errors[0].msg,
-					range: new vscode.Range(new vscode.Position(errors[0].line-1, errors[0].column), new vscode.Position(errors[0].line-1, errors[0].column)),
-					severity: vscode.DiagnosticSeverity.Error,
-					// source: '',
-					// relatedInformation: [
-					// 	new vscode.DiagnosticRelatedInformation(new vscode.Location(document.uri, new vscode.Range(new vscode.Position(1, 8), new vscode.Position(1, 9))), 'first assignment to `x`')
-					// ]
-				});
-			}); 
-			collection.set(document.uri, diagnostics);
-		} else {
-			collection.clear();
-		}
-	} else {
-		collection.clear();
-	}
-}
 
 // This method is called when your extension is deactivated
 export function deactivate() { }
