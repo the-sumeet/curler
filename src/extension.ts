@@ -1,11 +1,8 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+
 import * as vscode from 'vscode';
-import * as path from 'path';
 import { CodelensProvider } from './CodelensProvider.js';
 import fs from 'fs';
 import cp from 'child_process';
-import parseCurlCommand from './parserDriver.js';
 
 
 // This method is called when your extension is activated
@@ -34,12 +31,14 @@ export function activate(context: vscode.ExtensionContext) {
 			// This var contains the file written
 			var fileWrittenPath: string;
 
-			if (err) {
-				fs.writeFileSync(currentFileName + ".err", stdout, 'utf-8');
-				fileWrittenPath = currentFileName + ".err";
-			} else {
-				fs.writeFileSync(currentFileName + ".out", stdout, 'utf-8');
+			fs.writeFileSync(currentFileName + ".err", stderr.toString(), 'utf-8');
+			fs.writeFileSync(currentFileName + ".out", stdout.toString(), 'utf-8');
+
+			// eslint-disable-next-line eqeqeq
+			if (stdout != null && stdout != "") {
 				fileWrittenPath = currentFileName + ".out";
+			} else {
+				fileWrittenPath = currentFileName + ".err";
 			}
 
 			const openPath = vscode.Uri.file(fileWrittenPath);
@@ -48,8 +47,6 @@ export function activate(context: vscode.ExtensionContext) {
 			});
 
 		});
-
-		vscode.window.showInformationMessage(`Hello from codelens`);
 	});
 	context.subscriptions.push(actionDisposable);
 
