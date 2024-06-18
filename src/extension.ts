@@ -29,23 +29,24 @@ export function activate(context: vscode.ExtensionContext) {
 		cp.exec(editor.document.getText(), (err: any, stdout: string, stderr: string) => {
 
 			// This var contains the file written
-			var fileWrittenPath: string;
+			var fileWrittenPath: string = "";
 
-			fs.writeFileSync(currentFileName + ".err", stderr.toString(), 'utf-8');
-			fs.writeFileSync(currentFileName + ".out", stdout.toString(), 'utf-8');
-
-			// eslint-disable-next-line eqeqeq
-			if (stdout != null && stdout != "") {
-				fileWrittenPath = currentFileName + ".out";
-			} else {
+			if (stderr !== null && stderr !== "") {
+				fs.writeFileSync(currentFileName + ".err", stderr.toString(), 'utf-8');
 				fileWrittenPath = currentFileName + ".err";
 			}
 
-			const openPath = vscode.Uri.file(fileWrittenPath);
-			vscode.workspace.openTextDocument(openPath).then(doc => {
-				vscode.window.showTextDocument(doc);
-			});
+			if (stdout !== null && stdout !== "") {
+				fs.writeFileSync(currentFileName + ".out", stdout.toString(), 'utf-8');
+				fileWrittenPath = currentFileName + ".out";
+			}
 
+			if (fileWrittenPath !== "") {
+				const openPath = vscode.Uri.file(fileWrittenPath);
+				vscode.workspace.openTextDocument(openPath).then(doc => {
+					vscode.window.showTextDocument(doc);
+				});
+			}
 		});
 	});
 	context.subscriptions.push(actionDisposable);
