@@ -63,7 +63,7 @@ class CodelensProvider {
         codeLens.command = {
             title: "Run",
             tooltip: "Run cURL command",
-            command: "helloworld.codelensAction",
+            command: "curler.runCurl",
             arguments: ["Argument 1", false]
         };
         return codeLens;

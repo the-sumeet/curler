@@ -28,8 +28,10 @@ export function activate(context: vscode.ExtensionContext) {
 		const currentFileName = editor.document.fileName;
 		cp.exec(editor.document.getText(), (err: any, stdout: string, stderr: string) => {
 
-			// This var contains the file written
 			var fileWrittenPath: string = "";
+
+			console.log("stdout: ");
+
 
 			if (stderr !== null && stderr !== "") {
 				fs.writeFileSync(currentFileName + ".err", stderr.toString(), 'utf-8');
