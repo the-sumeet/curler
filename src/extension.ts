@@ -26,6 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 
 		const currentFileName = editor.document.fileName;
+
 		cp.exec(editor.document.getText(), (err: any, stdout: string, stderr: string) => {
 
 			var fileWrittenPath: string = "";
@@ -33,8 +34,8 @@ export function activate(context: vscode.ExtensionContext) {
 			console.log("stdout: ");
 
 
-			if (stderr !== null && stderr !== "") {
-				fs.writeFileSync(currentFileName + ".err", stderr.toString(), 'utf-8');
+			if (err !== null && err !== undefined) {
+				fs.writeFileSync(currentFileName + ".err", err.toString(), 'utf-8');
 				fileWrittenPath = currentFileName + ".err";
 			}
 
