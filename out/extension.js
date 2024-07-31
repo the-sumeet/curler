@@ -48,11 +48,10 @@ function activate(context) {
         }
         const currentFileName = editor.document.fileName;
         child_process_1.default.exec(editor.document.getText(), (err, stdout, stderr) => {
-            // This var contains the file written
             var fileWrittenPath = "";
             console.log("stdout: ");
-            if (stderr !== null && stderr !== "") {
-                fs_1.default.writeFileSync(currentFileName + ".err", stderr.toString(), 'utf-8');
+            if (err !== null && err !== undefined) {
+                fs_1.default.writeFileSync(currentFileName + ".err", err.toString(), 'utf-8');
                 fileWrittenPath = currentFileName + ".err";
             }
             if (stdout !== null && stdout !== "") {

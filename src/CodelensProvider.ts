@@ -8,7 +8,7 @@ export class CodelensProvider implements vscode.CodeLensProvider {
 	private _onDidChangeCodeLenses: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
 	public readonly onDidChangeCodeLenses: vscode.Event<void> = this._onDidChangeCodeLenses.event;
 
-	constructor() {
+constructor() {
 		this.regex = /(.+)/g;
 		this.regex = RegExp('curl', 'g');
 
